@@ -11,6 +11,7 @@ import java.util.List;
 /* Created by Arjun Gautam */
 @RestController
 @CrossOrigin("http://localhost:3000")
+@RequestMapping("/api/v1/auth")
 public class UserController {
 
     @Autowired

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/tickets/")
+@RequestMapping("/api/v1/tickets/")
 @AllArgsConstructor
 public class TicketController {
     private final TicketRepository ticketRepository;
