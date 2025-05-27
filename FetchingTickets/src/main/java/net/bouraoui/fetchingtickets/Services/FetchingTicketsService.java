@@ -14,4 +14,5 @@ public interface FetchingTicketsService {
 
     List<Map<String,Object>> fetchDailyPeakHours();
     List<Map<String,Object>> fetchTopTechnicianPerformance(int limit);
+    List<Map<String,Object>> fetchAvgResolutionByPriority();
 }

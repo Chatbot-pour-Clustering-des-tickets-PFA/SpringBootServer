@@ -25,7 +25,7 @@ public class ContentController {
 
 
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public String authenticateAndGetToken(@RequestBody LoginForm loginForm) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginForm.username(), loginForm.password()

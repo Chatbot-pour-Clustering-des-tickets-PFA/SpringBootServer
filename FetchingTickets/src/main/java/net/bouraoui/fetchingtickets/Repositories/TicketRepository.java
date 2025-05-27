@@ -155,4 +155,19 @@ SELECT tech.id AS technician_id, tech.name S technician_name, COUNT(*) AS resolv
     ORDER BY c.day
   """, nativeQuery = true)
     List<Map<String,Object>> fetchDailyPeakHours();
+
+    @Query(value = """
+    SELECT
+      t.priority                              AS priority,
+      ROUND(
+        AVG(EXTRACT(EPOCH FROM (t.resolved_date - t.creation_date)))
+        / 3600.0
+      , 1)                                     AS avg_resolution_hours
+    FROM ticket t
+    WHERE t.status = 'resolved'
+      AND t.resolved_date IS NOT NULL
+    GROUP BY t.priority
+    ORDER BY t.priority
+  """, nativeQuery = true)
+    List<Map<String,Object>> fetchAvgResolutionByPriority();
 }

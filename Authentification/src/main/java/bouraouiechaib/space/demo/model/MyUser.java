@@ -16,6 +16,8 @@ public class MyUser {
     private String username;
     private String firstname;
     private String lastname;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(unique = true)
     public String getEmail() {
@@ -56,9 +58,10 @@ public class MyUser {
     public Role getRole() {
         return role;
     }
+    @Column(unique = true)
     private String email;
     private String password;
-    private Role role;
+
 
 
 }

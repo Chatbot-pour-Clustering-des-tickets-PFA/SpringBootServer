@@ -61,6 +61,11 @@ public class FetchingTicketsServiceImpl implements FetchingTicketsService {
         return ticketRepository.fetchTopTechnicianPerformance(limit);
     }
 
+    @Override
+    public List<Map<String,Object>> fetchAvgResolutionByPriority() {
+        return ticketRepository.fetchAvgResolutionByPriority();
+    }
+
 
 
 }

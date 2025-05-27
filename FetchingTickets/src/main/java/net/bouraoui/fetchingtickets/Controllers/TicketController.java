@@ -102,4 +102,9 @@ public class TicketController {
         return ResponseEntity.ok(fetchingTicketsService.fetchTopTechnicianPerformance(limit));
     }
 
+    @GetMapping("/analytics/avg-resolution-by-priority")
+    public ResponseEntity<List<Map<String,Object>>> getAvgResolutionByPriority() {
+        return ResponseEntity.ok(fetchingTicketsService.fetchAvgResolutionByPriority());
+    }
+
 }

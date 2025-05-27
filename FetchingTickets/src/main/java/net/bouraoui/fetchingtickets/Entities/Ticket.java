@@ -24,18 +24,22 @@ public class Ticket {
 
     private Instant modificationDate;
 
+    @Enumerated(EnumType.STRING)
     private Priority priority;
 
     private int userId;
 
     private String answer;
 
+    @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
 
     private int techinician_id;
 
+    @Enumerated(EnumType.STRING)
     private ResolverType resolvedBy;
 }

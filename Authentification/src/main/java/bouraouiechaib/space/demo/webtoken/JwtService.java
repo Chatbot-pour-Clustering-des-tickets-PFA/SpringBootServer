@@ -19,16 +19,14 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtService {
 
-    private static final String SECRET = "638DAE3A90B0303CF3808F40A95A7F02F24B4B5D029C954CF543F78E9EF1DC0384BE681C249F1223F6B55AA21DC070914834CA22C8DD98E14A872CA010091ACC";
+    private static final String SECRET = "…your base64-encoded secret…";
     private static final long VALIDITY = TimeUnit.MINUTES.toMillis(30);
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, String> claims = new HashMap<>();
-
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusMillis(VALIDITY)))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + VALIDITY))
                 .signWith(generateKey())
                 .compact();
     }
@@ -39,19 +37,19 @@ public class JwtService {
     }
 
     public String extractUsername(String jwt) {
-        Claims claims = getClaims(jwt);
-        return claims.getSubject();
+        return getClaims(jwt).getSubject();
     }
 
     private Claims getClaims(String jwt) {
         return Jwts.parser()
                 .setSigningKey(generateKey())
+                .build()
                 .parseClaimsJws(jwt)
                 .getBody();
     }
 
     public boolean isTokenValid(String jwt) {
-        Claims claims = getClaims(jwt);
-        return claims.getExpiration().after(Date.from(Instant.now()));
+        Date expiration = getClaims(jwt).getExpiration();
+        return expiration.after(new Date());
     }
 }
