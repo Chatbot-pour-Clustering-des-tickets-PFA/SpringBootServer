@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.bouraoui.fetchingtickets.Dtos.DashboardStats;
 import net.bouraoui.fetchingtickets.Entities.Ticket;
 import net.bouraoui.fetchingtickets.Repositories.TicketRepository;
+import net.bouraoui.fetchingtickets.Repositories.TopTechnician;
 import net.bouraoui.fetchingtickets.Services.FetchingTicketsService;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class FetchingTicketsServiceImpl implements FetchingTicketsService {
     }
 
     @Override
-    public List<Map<String,Object>> fetchTopTechnicianPerformance(int limit) {
+    public List<TopTechnician> fetchTopTechnicianPerformance(int limit) {
         return ticketRepository.fetchTopTechnicianPerformance(limit);
     }
 

@@ -124,11 +124,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Map<String, Object>> fetchCountByCategory();
 
     @Query(value = """ 
-SELECT tech.id AS technician_id, tech.name S technician_name, COUNT(*) AS resolved_count
+SELECT tech.id AS technician_id, tech.name AS technician_name, COUNT(*) AS resolved_count
         FROM ticket t JOIN technician tech ON t.techinician_id = tech.id WHERE t.status = 'RESOLVED'AND t.resolved_date IS NOT NULL GROUP BY tech.id, tech.name ORDER BY resolved_count DESC
         LIMIT :limit
         """,nativeQuery = true )
-    List<Map<String,Object>> fetchTopTechnicianPerformance(@Param("limit") int limit);
+    List<TopTechnician> fetchTopTechnicianPerformance(@Param("limit") int limit);
 
     @Query(value = """
     WITH counts AS (

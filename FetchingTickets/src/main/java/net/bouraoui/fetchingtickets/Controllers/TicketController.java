@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import net.bouraoui.fetchingtickets.Dtos.DashboardStats;
 import net.bouraoui.fetchingtickets.Entities.Ticket;
 import net.bouraoui.fetchingtickets.Repositories.TicketRepository;
+import net.bouraoui.fetchingtickets.Repositories.TopTechnician;
 import net.bouraoui.fetchingtickets.Services.FetchingTicketsService;
 import net.bouraoui.fetchingtickets.TicketResolverContext;
 import org.springframework.http.HttpStatus;
@@ -96,7 +97,7 @@ public class TicketController {
     }
 
     @GetMapping("/analytics/top-technicians")
-    public ResponseEntity<List<Map<String,Object>>> getTopTechnicians(
+    public ResponseEntity<List<TopTechnician>> getTopTechnicians(
             @RequestParam(name="limit", defaultValue="5") int limit
     ) {
         return ResponseEntity.ok(fetchingTicketsService.fetchTopTechnicianPerformance(limit));
