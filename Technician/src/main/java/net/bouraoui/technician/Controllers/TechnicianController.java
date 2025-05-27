@@ -41,4 +41,8 @@ public class TechnicianController {
         }
 
     }
+
+
+    // this part is for statistics
+
 }

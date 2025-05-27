@@ -20,6 +20,8 @@ public class Ticket {
 
     private Instant creationDate;
 
+    private Instant resolvedDate;
+
     private Instant modificationDate;
 
     private Priority priority;

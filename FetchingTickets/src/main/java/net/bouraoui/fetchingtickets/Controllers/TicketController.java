@@ -2,14 +2,17 @@ package net.bouraoui.fetchingtickets.Controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import net.bouraoui.fetchingtickets.Dtos.DashboardStats;
 import net.bouraoui.fetchingtickets.Entities.Ticket;
 import net.bouraoui.fetchingtickets.Repositories.TicketRepository;
+import net.bouraoui.fetchingtickets.Services.FetchingTicketsService;
 import net.bouraoui.fetchingtickets.TicketResolverContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class TicketController {
     private final TicketRepository ticketRepository;
     private final TicketResolverContext ticketResolverContext;
+    private final FetchingTicketsService fetchingTicketsService;
 
 
     @PostMapping("createTicket")
@@ -79,4 +83,23 @@ public class TicketController {
 
         return ResponseEntity.ok(tickets);
     }*/
+
+    @GetMapping("/stats")
+    public ResponseEntity<DashboardStats> getDashboardStats() {
+        DashboardStats stats = fetchingTicketsService.fetchDashboardStats();
+        return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/analytics/daily-peak-hours")
+    public ResponseEntity<List<Map<String,Object>>> getDailyPeakHours() {
+        return ResponseEntity.ok(fetchingTicketsService.fetchDailyPeakHours());
+    }
+
+    @GetMapping("/analytics/top-technicians")
+    public ResponseEntity<List<Map<String,Object>>> getTopTechnicians(
+            @RequestParam(name="limit", defaultValue="5") int limit
+    ) {
+        return ResponseEntity.ok(fetchingTicketsService.fetchTopTechnicianPerformance(limit));
+    }
+
 }
