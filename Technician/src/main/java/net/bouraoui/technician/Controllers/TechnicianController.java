@@ -3,11 +3,10 @@ package net.bouraoui.technician.Controllers;
 import lombok.AllArgsConstructor;
 import net.bouraoui.technician.kafka.KafkaProducerService;
 import net.bouraoui.technician.kafka.KafkaResponseHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +19,11 @@ public class TechnicianController {
 
     private final KafkaResponseHandler kafkaResponseHandler;
     private final KafkaProducerService kafkaProducerService;
+    private final RestTemplate restTemplate;
+
+    // Replace with your actual ticket service URL or service discovery name
+    @Value("${ticket.service.url:http://ticket-service/api/v1/tickets}")
+    private String ticketServiceBaseUrl;
 
     @GetMapping("/getTickets/{technician_id}")
     public ResponseEntity<?> getTickets(@PathVariable("technician_id") int technician_id) {
@@ -39,10 +43,31 @@ public class TechnicianController {
         } catch (Exception e) {
             return ResponseEntity.status(504).body("No response from ticket service in time.");
         }
-
     }
 
 
-    // this part is for statistics
+    @GetMapping("/monthly-stats/{technicianId}")
+    public ResponseEntity<?> getMonthlyStats(@PathVariable int technicianId) {
+        Map<String, Object> stats = new HashMap<>();
 
+        try {
+            int assigned = restTemplate.getForObject(
+                    ticketServiceBaseUrl + "/assigned-count/" + technicianId, Integer.class);
+
+            int resolved = restTemplate.getForObject(
+                    ticketServiceBaseUrl + "/resolved-count/" + technicianId, Integer.class);
+
+            double avgTime = restTemplate.getForObject(
+                    ticketServiceBaseUrl + "/avg-resolution-time/" + technicianId, Double.class);
+
+            stats.put("assignedTicketsLastMonth", assigned);
+            stats.put("resolvedTicketsLastMonth", resolved);
+            stats.put("averageResolutionTimeInHours", avgTime);
+
+            return ResponseEntity.ok(stats);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(502).body("Failed to fetch data from ticket service: " + e.getMessage());
+        }
+    }
 }

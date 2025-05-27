@@ -9,5 +9,8 @@ public class TechnicianApplication {
     public static void main(String[] args) {
         SpringApplication.run(TechnicianApplication.class, args);
     }
-
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
