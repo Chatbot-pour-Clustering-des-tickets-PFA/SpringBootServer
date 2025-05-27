@@ -23,6 +23,20 @@ public class TicketController {
     private final TicketResolverContext ticketResolverContext;
     private final FetchingTicketsService fetchingTicketsService;
 
+    @GetMapping("/assigned-count/{technicianId}")
+    public int getAssignedTicketCount(@PathVariable int technicianId) {
+        return ticketService.countAssignedTicketsLastMonth(technicianId);
+    }
+
+    @GetMapping("/resolved-count/{technicianId}")
+    public int getResolvedTicketCount(@PathVariable int technicianId) {
+        return ticketService.countResolvedTicketsLastMonth(technicianId);
+    }
+
+    @GetMapping("/avg-resolution-time/{technicianId}")
+    public double getAverageResolutionTime(@PathVariable int technicianId) {
+        return ticketService.getAverageResolutionTimeLastMonth(technicianId);
+    }
 
     @PostMapping("createTicket")
     public ResponseEntity<String> createTicket(@RequestBody Ticket ticket) {
