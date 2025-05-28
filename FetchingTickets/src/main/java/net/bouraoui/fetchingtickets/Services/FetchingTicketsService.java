@@ -13,5 +13,12 @@ public interface FetchingTicketsService {
     DashboardStats fetchDashboardStats();
 
     List<Map<String,Object>> fetchDailyPeakHours();
+
     List<Map<String,Object>> fetchTopTechnicianPerformance(int limit);
+
+    int countAssignedTicketsLastMonth(int technicianId);
+
+    int countResolvedTicketsLastMonth(int technicianId);
+
+    double getAverageResolutionTimeLastMonth(int technicianId);
 }

@@ -155,4 +155,39 @@ SELECT tech.id AS technician_id, tech.name S technician_name, COUNT(*) AS resolv
     ORDER BY c.day
   """, nativeQuery = true)
     List<Map<String,Object>> fetchDailyPeakHours();
+    @Query(value = """
+    SELECT COUNT(*) 
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND creation_date >= date_trunc('month', now() - interval '1 month') 
+      AND creation_date < date_trunc('month', now())
+""", nativeQuery = true)
+    int countAssignedTicketsLastMonth(@Param("technicianId") int technicianId);
+
+
+    @Query(value = """
+    SELECT COUNT(*) 
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND status = 'RESOLVED' 
+      AND resolved_date >= date_trunc('month', now() - interval '1 month') 
+      AND resolved_date < date_trunc('month', now())
+""", nativeQuery = true)
+    int countResolvedTicketsLastMonth(@Param("technicianId") int technicianId);
+
+
+    @Query(value = """
+    SELECT 
+      ROUND(
+        AVG(EXTRACT(EPOCH FROM (resolved_date - creation_date)) / 3600.0), 1
+      )
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND status = 'RESOLVED' 
+      AND resolved_date IS NOT NULL 
+      AND resolved_date >= date_trunc('month', now() - interval '1 month') 
+      AND resolved_date < date_trunc('month', now())
+""", nativeQuery = true)
+    Double getAverageResolutionTimeLastMonth(@Param("technicianId") int technicianId);
+
 }

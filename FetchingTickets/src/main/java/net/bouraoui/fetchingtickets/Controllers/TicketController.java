@@ -21,21 +21,21 @@ import java.util.Optional;
 public class TicketController {
     private final TicketRepository ticketRepository;
     private final TicketResolverContext ticketResolverContext;
-    private final FetchingTicketsService fetchingTicketsService;
+    private final FetchingTicketsServiceImpl fetchingTicketsServiceImpl;
 
     @GetMapping("/assigned-count/{technicianId}")
     public int getAssignedTicketCount(@PathVariable int technicianId) {
-        return ticketService.countAssignedTicketsLastMonth(technicianId);
+        return fetchingTicketsServiceImpl.countAssignedTicketsLastMonth(technicianId);
     }
 
     @GetMapping("/resolved-count/{technicianId}")
     public int getResolvedTicketCount(@PathVariable int technicianId) {
-        return ticketService.countResolvedTicketsLastMonth(technicianId);
+        return fetchingTicketsServiceImpl.countResolvedTicketsLastMonth(technicianId);
     }
 
     @GetMapping("/avg-resolution-time/{technicianId}")
     public double getAverageResolutionTime(@PathVariable int technicianId) {
-        return ticketService.getAverageResolutionTimeLastMonth(technicianId);
+        return fetchingTicketsServiceImpl.getAverageResolutionTimeLastMonth(technicianId);
     }
 
     @PostMapping("createTicket")
