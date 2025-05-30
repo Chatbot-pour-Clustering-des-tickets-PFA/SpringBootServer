@@ -3,10 +3,15 @@ package net.bouraoui.fetchingtickets.Controllers;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.bouraoui.fetchingtickets.Dtos.DashboardStats;
+import net.bouraoui.fetchingtickets.Entities.CreateTicketRequest;
+import net.bouraoui.fetchingtickets.Entities.Status;
 import net.bouraoui.fetchingtickets.Entities.Ticket;
+import net.bouraoui.fetchingtickets.Repositories.PriorityCount;
+import net.bouraoui.fetchingtickets.Repositories.RecentTicket;
 import net.bouraoui.fetchingtickets.Repositories.TicketRepository;
 import net.bouraoui.fetchingtickets.Repositories.TopTechnician;
 import net.bouraoui.fetchingtickets.Services.FetchingTicketsService;
+import net.bouraoui.fetchingtickets.Stats.TicketsOverTime;
 import net.bouraoui.fetchingtickets.TicketResolverContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +29,9 @@ public class TicketController {
     private final TicketResolverContext ticketResolverContext;
     private final FetchingTicketsService fetchingTicketsService;
 
-    @GetMapping("/assigned-count/{technicianId}")
+    /*@GetMapping("/assigned-count/{technicianId}")
     public int getAssignedTicketCount(@PathVariable int technicianId) {
-        return ticketService.countAssignedTicketsLastMonth(technicianId);
+        return fetchingTicketsService.countAssignedTicketsLastMonth(technicianId);
     }
 
     @GetMapping("/resolved-count/{technicianId}")
@@ -37,13 +42,19 @@ public class TicketController {
     @GetMapping("/avg-resolution-time/{technicianId}")
     public double getAverageResolutionTime(@PathVariable int technicianId) {
         return ticketService.getAverageResolutionTimeLastMonth(technicianId);
-    }
+    }*/
 
     @PostMapping("createTicket")
-    public ResponseEntity<String> createTicket(@RequestBody Ticket ticket) {
-        //assign priority
-        //assign cluster
-        //assign technician
+    public ResponseEntity<String> createTicket(@RequestBody CreateTicketRequest ticketReq) {
+        Ticket ticket = new Ticket();
+        ticket.setStatus(Status.OPEN);
+        ticket.setPriority(ticketReq.priority());
+        ticket.setDescription(ticketReq.description());
+        ticket.setTitle(ticketReq.title());
+        ticket.setUserId(ticketReq.userId());
+        ticket.setCategory(ticketReq.category());
+        int technicianId = fetchingTicketsService.AssignerTechician(ticket);
+        ticket.setTechinician_id(technicianId);
         ticketRepository.save(ticket);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Ticket created successfully.");
@@ -120,6 +131,25 @@ public class TicketController {
     @GetMapping("/analytics/avg-resolution-by-priority")
     public ResponseEntity<List<Map<String,Object>>> getAvgResolutionByPriority() {
         return ResponseEntity.ok(fetchingTicketsService.fetchAvgResolutionByPriority());
+    }
+
+    @GetMapping("/tickets-over-time")
+    public ResponseEntity<List<TicketsOverTime>> getTicketsOverTime() {
+        List<TicketsOverTime> data = ticketRepository.fetchTicketsOverTime();
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/recent-tickets")
+    public ResponseEntity<List<RecentTicket>> getRecentTickets(
+            @RequestParam(name = "limit", defaultValue = "5") int limit
+    ) {
+        List<RecentTicket> list = ticketRepository.fetchRecentTickets(limit);
+        return ResponseEntity.ok(list);
+    }
+    @GetMapping("/tickets-analytics/count-by-priority")
+    public ResponseEntity<List<PriorityCount>> getCountByPriority() {
+        List<PriorityCount> list = ticketRepository.fetchCountByPriority();
+        return ResponseEntity.ok(list);
     }
 
 }

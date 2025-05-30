@@ -29,8 +29,7 @@ public class SecurityConfiguration {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    //@CrossOrigin(origins = "http://localhost:4200")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://localhost:4200")
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
 
@@ -38,7 +37,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/home", "/register/**", "/authenticate", "/api/v1/auth/**").permitAll();
                 })
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

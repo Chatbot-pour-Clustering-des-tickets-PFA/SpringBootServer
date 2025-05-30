@@ -1,6 +1,8 @@
 package net.bouraoui.technician.Controllers;
 
 import lombok.AllArgsConstructor;
+import net.bouraoui.technician.Entities.Technician;
+import net.bouraoui.technician.Repositories.TechnicianRepository;
 import net.bouraoui.technician.kafka.KafkaProducerService;
 import net.bouraoui.technician.kafka.KafkaResponseHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/technician")
 public class TechnicianController {
 
+    private final TechnicianRepository technicianRepository;
     private final KafkaResponseHandler kafkaResponseHandler;
     private final KafkaProducerService kafkaProducerService;
     private final RestTemplate restTemplate;
@@ -69,5 +72,16 @@ public class TechnicianController {
         } catch (Exception e) {
             return ResponseEntity.status(502).body("Failed to fetch data from ticket service: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/least-loaded")
+    public ResponseEntity<?> getLeastLoadedTechId(
+            @RequestParam("category") String category) {
+
+        Technician tech = technicianRepository.findTechnicianWithLeastOpenTicketsByCategory(category);
+        if (tech == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(tech.getId());
     }
 }

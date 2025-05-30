@@ -27,6 +27,7 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
+    //client
     private int userId;
 
     private String answer;
@@ -39,6 +40,8 @@ public class Ticket {
 
 
     private int techinician_id;
+
+    //private int client_id;
 
     @Enumerated(EnumType.STRING)
     private ResolverType resolvedBy;

@@ -17,7 +17,7 @@ public class FetchingTicketsApplication {
     }
 
     @Bean
-    @LoadBalanced
+    //@LoadBalanced
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
