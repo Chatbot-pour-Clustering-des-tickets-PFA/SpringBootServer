@@ -32,6 +32,14 @@ public class Ticket {
 
     private String answer;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String answerBYDL;
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String answerByRag;
+
     @Enumerated(EnumType.STRING)
     private Category category;
 

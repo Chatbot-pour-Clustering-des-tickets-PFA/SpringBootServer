@@ -11,6 +11,8 @@ public record CreateTicketRequest(
         Priority priority,
         int userId,
         String answer,
+        String AnswerByDL,
+        String AnswerByRAG,
         Category category,
         Status status,
         int technicianId,

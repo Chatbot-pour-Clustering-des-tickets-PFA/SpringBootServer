@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,20 +31,20 @@ public class TicketController {
     private final TicketResolverContext ticketResolverContext;
     private final FetchingTicketsService fetchingTicketsService;
 
-    /*@GetMapping("/assigned-count/{technicianId}")
+    @GetMapping("/assigned-count/{technicianId}")
     public int getAssignedTicketCount(@PathVariable int technicianId) {
         return fetchingTicketsService.countAssignedTicketsLastMonth(technicianId);
     }
 
     @GetMapping("/resolved-count/{technicianId}")
     public int getResolvedTicketCount(@PathVariable int technicianId) {
-        return ticketService.countResolvedTicketsLastMonth(technicianId);
+        return fetchingTicketsService.countResolvedTicketsLastMonth(technicianId);
     }
 
     @GetMapping("/avg-resolution-time/{technicianId}")
     public double getAverageResolutionTime(@PathVariable int technicianId) {
-        return ticketService.getAverageResolutionTimeLastMonth(technicianId);
-    }*/
+        return fetchingTicketsService.getAverageResolutionTimeLastMonth(technicianId);
+    }
 
     @PostMapping("createTicket")
     public ResponseEntity<String> createTicket(@RequestBody CreateTicketRequest ticketReq) {
@@ -150,6 +152,22 @@ public class TicketController {
     public ResponseEntity<List<PriorityCount>> getCountByPriority() {
         List<PriorityCount> list = ticketRepository.fetchCountByPriority();
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/ticketListForClient/{clientId}")
+    public ResponseEntity<?> geticketListFoCLient(@PathVariable("clientId") int clientId){
+        return ResponseEntity.ok(ticketRepository.findByUserIdWithTechnicianInfo(clientId));
+    }
+
+    @PostMapping("/updateTicket")
+    public ResponseEntity<?> updateTicketStatusToResolved(@RequestBody UpdateTicketRequest req){
+        Ticket ticket = ticketRepository.findById(req.getTicketID()).orElseThrow();
+        ticket.setStatus(Status.RESOLVED);
+        ticket.setResolvedDate(Instant.now());
+        ticketRepository.save(ticket);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Ticket updated successfully.");
+        return ResponseEntity.ok(response);
     }
 
 }

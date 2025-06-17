@@ -95,12 +95,28 @@ public class FetchingTicketsServiceImpl implements FetchingTicketsService {
     @Override
     public int AssignerTechician(Ticket ticket) {
 
-        String url = "http://localhost:8083/api/technicians/least-loaded?category={category}";
+        String url = "http://localhost:8083/api/v1/technician/least-loaded/{category}";
         int techId = Math.toIntExact(restTemplate
                 .getForObject(url, Long.class, ticket.getCategory().name()));
 
-
         return techId;
+    }
+
+
+    @Override
+    public int countAssignedTicketsLastMonth(int technicianId) {
+        return ticketRepository.countAssignedTicketsLastMonth(technicianId);
+    }
+
+    @Override
+    public int countResolvedTicketsLastMonth(int technicianId) {
+        return ticketRepository.countResolvedTicketsLastMonth(technicianId);
+    }
+
+    @Override
+    public double getAverageResolutionTimeLastMonth(int technicianId) {
+        Double avg = ticketRepository.getAverageResolutionTimeLastMonth(technicianId);
+        return avg != null ? avg : 0.0;
     }
 
 

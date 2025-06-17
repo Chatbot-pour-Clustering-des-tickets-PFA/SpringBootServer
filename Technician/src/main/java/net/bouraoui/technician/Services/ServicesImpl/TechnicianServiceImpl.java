@@ -1,11 +1,12 @@
 package net.bouraoui.technician.Services.ServicesImpl;
 
-import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import net.bouraoui.technician.Entities.Technician;
 import net.bouraoui.technician.Repositories.TechnicianRepository;
 import net.bouraoui.technician.Services.TechnicianService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service @AllArgsConstructor
@@ -15,9 +16,9 @@ public class TechnicianServiceImpl implements TechnicianService {
 
     @Override
     public Technician findTechniciaByID(int id) {
-        Technician technician = technicianRepository.findById(id).orElseThrow(() -> new NotFoundException("technician does not exist"));
-
-        return technician;
+        return technicianRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Technician does not exist"));
     }
+
 
 }

@@ -77,4 +77,6 @@ public class ContentController {
 
             AuthResponse body = new AuthResponse(token, userId, clientId, technicianId,user.getRole());
             return ResponseEntity.ok(body);        }
+
+
     }

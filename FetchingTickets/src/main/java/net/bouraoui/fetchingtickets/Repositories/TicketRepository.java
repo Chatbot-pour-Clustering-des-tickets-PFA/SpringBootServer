@@ -1,5 +1,6 @@
 package net.bouraoui.fetchingtickets.Repositories;
 
+import net.bouraoui.fetchingtickets.Dtos.ClientTicketDTO;
 import net.bouraoui.fetchingtickets.Entities.Ticket;
 import net.bouraoui.fetchingtickets.Stats.TicketsOverTime;
 import net.bouraoui.fetchingtickets.Repositories.PriorityCount;
@@ -21,6 +22,40 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
     @Query("SELECT t FROM Ticket t WHERE t.userId = :userID")
     List<Ticket> findByUserId(@Param("userID") int userID);
+
+    @Query(value = """
+    SELECT 
+        t.id AS id, 
+        t.title AS title, 
+        t.description AS description, 
+        t.category AS category, 
+        t.status AS status, 
+        t.creation_date AS creationDate, 
+        t.resolved_date AS resolvedDate, 
+        t.modification_date AS modificationDate, 
+        t.priority AS priority, 
+        t.user_id AS userId, 
+        t.answer AS answer, 
+        t.techinician_id AS techinicianId, 
+        t.resolved_by AS resolvedBy, 
+        u.email AS technicianEmail
+    FROM ticket t
+    JOIN technician tech ON t.techinician_id = tech.id
+    JOIN my_user u ON tech.user_id = u.id
+    WHERE t.user_id = :userID
+""", nativeQuery = true)
+    List<ClientTicketDTO> findByUserIdWithTechnicianInfo(@Param("userID") int userID);
+
+    @Query(value = """
+    SELECT cu.email AS clientEmail
+    FROM client c
+    JOIN my_user cu ON c.user_id = cu.id
+    WHERE c.id = :clientId
+""", nativeQuery = true)
+    String findClientEmailByClientId(@Param("clientId") int clientId);
+
+
+
 
     @Query(value = """
       WITH this_month AS (
@@ -235,4 +270,43 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
       ORDER BY count DESC
     """, nativeQuery = true)
     List<PriorityCount> fetchCountByPriority();
+
+
+    @Query(value = """
+    SELECT COUNT(*) 
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND creation_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+      AND creation_date < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+""", nativeQuery = true)
+    int countAssignedTicketsLastMonth(@Param("technicianId") int technicianId);//for this month
+
+
+
+
+    @Query(value = """
+    SELECT COUNT(*) 
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND status = 'RESOLVED' 
+      AND resolved_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01')\s
+      AND resolved_date < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+""", nativeQuery = true)
+    int countResolvedTicketsLastMonth(@Param("technicianId") int technicianId);
+
+
+
+    @Query(value = """
+    SELECT 
+      ROUND(AVG(TIMESTAMPDIFF(SECOND, creation_date, resolved_date) / 3600), 1)
+    FROM ticket 
+    WHERE techinician_id = :technicianId 
+      AND status = 'RESOLVED' 
+      AND resolved_date IS NOT NULL 
+      AND resolved_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01') 
+      AND resolved_date < DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+""", nativeQuery = true)
+    Double getAverageResolutionTimeLastMonth(@Param("technicianId") int technicianId);// it is for tis month
+
+
 }

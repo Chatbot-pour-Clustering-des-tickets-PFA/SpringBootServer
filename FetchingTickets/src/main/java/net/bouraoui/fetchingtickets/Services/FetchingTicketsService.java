@@ -18,4 +18,9 @@ public interface FetchingTicketsService {
     List<TopTechnician> fetchTopTechnicianPerformance(int limit);
     List<Map<String,Object>> fetchAvgResolutionByPriority();
     int AssignerTechician(Ticket ticket);
+    int countAssignedTicketsLastMonth(int technicianId);
+
+    int countResolvedTicketsLastMonth(int technicianId);
+
+    double getAverageResolutionTimeLastMonth(int technicianId);
 }
